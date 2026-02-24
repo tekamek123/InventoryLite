@@ -17,7 +17,13 @@ const RegisterUserScreen = ({ navigation }) => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.fullName.trim()) newErrors.fullName = 'Full name is required';
+    const nameTrimmed = formData.fullName.trim();
+    if (!nameTrimmed) {
+      newErrors.fullName = 'Full name is required';
+    } else if (/^\d+$/.test(nameTrimmed)) {
+      newErrors.fullName = 'Full name must contain text characters';
+    }
+
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
@@ -66,7 +72,9 @@ const RegisterUserScreen = ({ navigation }) => {
             placeholder="John Doe"
             value={formData.fullName}
             onChangeText={(v) => {
-              setFormData({...formData, fullName: v});
+              // Prevent typing numbers in Name
+              const filtered = v.replace(/[0-9]/g, '');
+              setFormData({...formData, fullName: filtered});
               if (errors.fullName) setErrors({...errors, fullName: null});
             }}
             error={errors.fullName}

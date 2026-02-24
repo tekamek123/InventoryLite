@@ -19,16 +19,26 @@ const AddProductScreen = ({ navigation }) => {
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Product name is required';
+    const nameTrimmed = formData.name.trim();
+    if (!nameTrimmed) {
+      newErrors.name = 'Product name is required';
+    } else if (/^\d+$/.test(nameTrimmed)) {
+      newErrors.name = 'Name must contain text characters';
+    }
+
     if (!formData.sku.trim()) newErrors.sku = 'SKU is required';
     
-    const priceNum = parseFloat(formData.price);
-    if (!formData.price) newErrors.price = 'Price is required';
-    else if (isNaN(priceNum) || priceNum < 0) newErrors.price = 'Invalid price';
+    if (!formData.price) {
+      newErrors.price = 'Price is required';
+    } else if (!/^\d+(\.\d+)?$/.test(formData.price)) {
+      newErrors.price = 'Price must be numeric';
+    }
 
-    const qtyNum = parseInt(formData.quantity, 10);
-    if (!formData.quantity) newErrors.quantity = 'Quantity is required';
-    else if (isNaN(qtyNum) || qtyNum < 0) newErrors.quantity = 'Invalid quantity';
+    if (!formData.quantity) {
+      newErrors.quantity = 'Quantity is required';
+    } else if (!/^\d+$/.test(formData.quantity)) {
+      newErrors.quantity = 'Quantity must be numeric';
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -66,7 +76,9 @@ const AddProductScreen = ({ navigation }) => {
             placeholder="e.g. Wireless Mouse"
             value={formData.name}
             onChangeText={(v) => {
-              setFormData({...formData, name: v});
+              // Prevent typing numbers in Name (as requested)
+              const filtered = v.replace(/[0-9]/g, '');
+              setFormData({...formData, name: filtered});
               if (errors.name) setErrors({...errors, name: null});
             }}
             error={errors.name}
@@ -89,7 +101,12 @@ const AddProductScreen = ({ navigation }) => {
               keyboardType="decimal-pad"
               value={formData.price}
               onChangeText={(v) => {
-                setFormData({...formData, price: v});
+                // Allow only numbers and one decimal point
+                const filtered = v.replace(/[^0-9.]/g, '');
+                const parts = filtered.split('.');
+                const final = parts.length > 2 ? `${parts[0]}.${parts.slice(1).join('')}` : filtered;
+                
+                setFormData({...formData, price: final});
                 if (errors.price) setErrors({...errors, price: null});
               }}
               containerStyle="flex-1 mr-4"
@@ -101,7 +118,9 @@ const AddProductScreen = ({ navigation }) => {
               keyboardType="number-pad"
               value={formData.quantity}
               onChangeText={(v) => {
-                setFormData({...formData, quantity: v});
+                // Allow only numbers
+                const filtered = v.replace(/[^0-9]/g, '');
+                setFormData({...formData, quantity: filtered});
                 if (errors.quantity) setErrors({...errors, quantity: null});
               }}
               containerStyle="flex-1"

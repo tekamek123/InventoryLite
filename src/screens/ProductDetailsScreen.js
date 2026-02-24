@@ -17,8 +17,18 @@ const ProductDetailsScreen = ({ route, navigation }) => {
   if (!product) return null;
 
   const handleAdjust = (type) => {
+    if (!adjustmentAmount) {
+      showToast('Please enter a quantity', 'error');
+      return;
+    }
+
+    if (!/^\d+$/.test(adjustmentAmount)) {
+      showToast('Quantity must be a numeric value', 'error');
+      return;
+    }
+
     const amount = parseInt(adjustmentAmount, 10);
-    if (isNaN(amount) || amount <= 0) {
+    if (amount <= 0) {
       showToast('Please enter a valid positive number', 'error');
       return;
     }
@@ -60,10 +70,10 @@ const ProductDetailsScreen = ({ route, navigation }) => {
             <Text className="text-slate-400 text-xs font-bold uppercase mb-1">Price</Text>
             <Text className="text-slate-900 text-xl font-bold">${product.price.toFixed(2)}</Text>
           </Card>
-          <Card className="flex-1 items-center bg-indigo-600 border-indigo-600">
+          <View className="flex-1 items-center bg-indigo-600 rounded-3xl p-5 shadow-sm border border-indigo-600 shadow-indigo-200">
             <Text className="text-indigo-100 text-xs font-bold uppercase mb-1">Current Stock</Text>
-            <Text className="text-white text-xl font-bold">{product.quantity}</Text>
-          </Card>
+            <Text className="text-white text-xl font-bold">{product.quantity.toString()}</Text>
+          </View>
         </View>
 
         <Card className="mb-6">
@@ -75,7 +85,11 @@ const ProductDetailsScreen = ({ route, navigation }) => {
               placeholder="Quantity"
               keyboardType="number-pad"
               value={adjustmentAmount}
-              onChangeText={setAdjustmentAmount}
+              onChangeText={(v) => {
+                // Allow only numbers
+                const filtered = v.replace(/[^0-9]/g, '');
+                setAdjustmentAmount(filtered);
+              }}
               containerStyle="mb-0 flex-1"
             />
           </View>
