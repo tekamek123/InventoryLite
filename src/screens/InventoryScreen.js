@@ -101,7 +101,7 @@ const InventoryScreen = ({ navigation }) => {
         <View className="flex-1">
           <View className="flex-row justify-between items-center mb-4">
             <Text className="text-slate-900 font-bold text-xl">Products ({filteredProducts.length})</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('AddProduct')}>
+            <TouchableOpacity onPress={() => setSearchQuery('')}>
               <Text className="text-indigo-600 font-semibold">View All</Text>
             </TouchableOpacity>
           </View>

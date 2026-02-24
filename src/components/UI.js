@@ -62,12 +62,12 @@ export const Input = ({
       {label && <Text className="text-slate-700 font-medium mb-2 ml-1 text-sm">{label}</Text>}
       <View 
         className={`bg-slate-100 border-2 rounded-2xl px-4 py-1 flex-row items-center ${
-          error ? 'border-rose-400' : 'border-transparent active:border-indigo-400'
+          error ? 'border-rose-400' : 'border-transparent'
         } ${className}`}
       >
         <TextInput 
           {...props} 
-          className="flex-1 text-slate-900 py-3 text-base"
+          className="flex-1 text-slate-900 py-3 text-base outline-none"
           placeholderTextColor="#94a3b8"
         />
       </View>
