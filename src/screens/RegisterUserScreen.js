@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useInventory } from '../context/InventoryContext';
+import { useToast } from '../context/ToastContext';
 import { Button, Input, Card } from '../components/UI';
 import { ChevronLeft, User, Mail, ShieldCheck } from 'lucide-react-native';
 
 const RegisterUserScreen = ({ navigation }) => {
   const { registerUser } = useInventory();
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     fullName: '',
     email: ''
@@ -31,19 +33,11 @@ const RegisterUserScreen = ({ navigation }) => {
     setLoading(true);
     try {
       registerUser(formData);
-      if (typeof window !== 'undefined' && window.alert) {
-        window.alert('User registered successfully');
-      } else {
-        Alert.alert('Success', 'User registered successfully');
-      }
+      showToast('User registered successfully', 'success');
       navigation.goBack();
     } catch (err) {
       const message = err.message || 'Failed to register user';
-      if (typeof window !== 'undefined' && window.alert) {
-        window.alert(message);
-      } else {
-        Alert.alert('Error', message);
-      }
+      showToast(message, 'error');
     } finally {
       setLoading(false);
     }

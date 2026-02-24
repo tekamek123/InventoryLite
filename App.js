@@ -6,6 +6,10 @@ import { StatusBar } from 'expo-status-bar';
 
 // Context
 import { InventoryProvider } from './src/context/InventoryContext';
+import { ToastProvider } from './src/context/ToastContext';
+
+// Components
+import Toast from './src/components/Toast';
 
 // Screens
 import InventoryScreen from './src/screens/InventoryScreen';
@@ -19,23 +23,26 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <InventoryProvider>
-      <NavigationContainer>
-        <StatusBar style="dark" />
-        <Stack.Navigator 
-          initialRouteName="Inventory"
-          screenOptions={{
-            headerShown: false,
-            contentStyle: { backgroundColor: '#f8fafc' },
-            animation: 'slide_from_right'
-          }}
-        >
-          <Stack.Screen name="Inventory" component={InventoryScreen} />
-          <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
-          <Stack.Screen name="AddProduct" component={AddProductScreen} />
-          <Stack.Screen name="RegisterUser" component={RegisterUserScreen} />
-          <Stack.Screen name="Transactions" component={TransactionsScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <ToastProvider>
+        <NavigationContainer>
+          <StatusBar style="dark" />
+          <Toast />
+          <Stack.Navigator 
+            initialRouteName="Inventory"
+            screenOptions={{
+              headerShown: false,
+              contentStyle: { backgroundColor: '#f8fafc' },
+              animation: 'slide_from_right'
+            }}
+          >
+            <Stack.Screen name="Inventory" component={InventoryScreen} />
+            <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
+            <Stack.Screen name="AddProduct" component={AddProductScreen} />
+            <Stack.Screen name="RegisterUser" component={RegisterUserScreen} />
+            <Stack.Screen name="Transactions" component={TransactionsScreen} />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </ToastProvider>
     </InventoryProvider>
   );
 }
