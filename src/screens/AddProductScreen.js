@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useInventory } from '../context/InventoryContext';
+import { useToast } from '../context/ToastContext';
 import { Button, Input, Card } from '../components/UI';
 import { ChevronLeft, Package, DollarSign, List, Hash } from 'lucide-react-native';
 
 const AddProductScreen = ({ navigation }) => {
   const { registerProduct } = useInventory();
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     sku: '',
     name: '',
@@ -38,20 +40,11 @@ const AddProductScreen = ({ navigation }) => {
     setLoading(true);
     try {
       registerProduct(formData);
-      // Fallback for web where Alert might be silent
-      if (typeof window !== 'undefined' && window.alert) {
-        window.alert('Product registered successfully');
-      } else {
-        Alert.alert('Success', 'Product registered successfully');
-      }
+      showToast('Product registered successfully', 'success');
       navigation.goBack();
     } catch (err) {
       const message = err.message || 'Failed to register product';
-      if (typeof window !== 'undefined' && window.alert) {
-        window.alert(message);
-      } else {
-        Alert.alert('Error', message);
-      }
+      showToast(message, 'error');
     } finally {
       setLoading(false);
     }

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text, SafeAreaView, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { useInventory } from '../context/InventoryContext';
+import { useToast } from '../context/ToastContext';
 import { Card, Button, Input } from '../components/UI';
 import { ChevronLeft, Package, Trash2, ArrowUpRight, ArrowDownLeft, Clock } from 'lucide-react-native';
 
 const ProductDetailsScreen = ({ route, navigation }) => {
   const { sku } = route.params;
   const { products, adjustStock } = useInventory();
+  const { showToast } = useToast();
   const product = products.find(p => p.sku === sku);
 
   const [adjustmentAmount, setAdjustmentAmount] = useState('');
@@ -17,11 +19,7 @@ const ProductDetailsScreen = ({ route, navigation }) => {
   const handleAdjust = (type) => {
     const amount = parseInt(adjustmentAmount, 10);
     if (isNaN(amount) || amount <= 0) {
-      if (typeof window !== 'undefined' && window.alert) {
-        window.alert('Please enter a valid positive number');
-      } else {
-        Alert.alert('Error', 'Please enter a valid positive number');
-      }
+      showToast('Please enter a valid positive number', 'error');
       return;
     }
 
@@ -30,18 +28,10 @@ const ProductDetailsScreen = ({ route, navigation }) => {
       const finalAmount = type === 'add' ? amount : -amount;
       adjustStock(sku, finalAmount);
       setAdjustmentAmount('');
-      if (typeof window !== 'undefined' && window.alert) {
-        window.alert('Stock updated successfully');
-      } else {
-        Alert.alert('Success', `Stock updated successfully`);
-      }
+      showToast('Stock updated successfully', 'success');
     } catch (err) {
       const message = err.message || 'Failed to update stock';
-      if (typeof window !== 'undefined' && window.alert) {
-        window.alert(message);
-      } else {
-        Alert.alert('Error', message);
-      }
+      showToast(message, 'error');
     } finally {
       setLoading(false);
     }
